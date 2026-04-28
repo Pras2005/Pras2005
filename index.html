@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prasad C. Desale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#0e0e0e;--paper:#f2efe8;--accent:#0e0e0e;--mid:#6b6b6b;--rule:#0e0e0e;
+  --green:#39ff14;--green-dim:#1a7a09;--green-muted:#0d4005;--crt:#050f03;
+}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.5;overflow-x:hidden}
+
+/* ── BRUTALIST LAYOUT ── */
+.site{max-width:1100px;margin:0 auto;padding:0 2rem 4rem}
+
+/* NAV */
+nav{display:flex;justify-content:space-between;align-items:flex-end;padding:2rem 0 1.5rem;border-bottom:3px solid var(--ink)}
+.nav-name{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.nav-right{display:flex;align-items:center;gap:2rem}
+.nav-links{display:flex;gap:1.5rem}
+.nav-links a{font-family:'Space Mono',monospace;font-size:11px;color:var(--mid);text-decoration:none;letter-spacing:1px;text-transform:uppercase;transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+
+/* TERMINAL PROMPT — the TUI trigger */
+.tui-trigger{font-family:'Space Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s;user-select:none;background:none;border:none;padding:0}
+.tui-trigger:hover{color:var(--ink)}
+.tui-trigger:hover .prompt-cursor{background:var(--ink)}
+.prompt-sign{font-size:13px}
+.prompt-text{font-size:10px;text-transform:uppercase;letter-spacing:2px}
+.prompt-cursor{display:inline-block;width:7px;height:12px;background:var(--mid);vertical-align:middle;animation:blink 1.2s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* HERO */
+.hero{padding:3rem 0 0;display:grid;grid-template-columns:1fr 280px;gap:3rem;align-items:start}
+.hero-index{font-family:'Space Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:3px;margin-bottom:1rem;text-transform:uppercase}
+.hero-h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(52px,8vw,96px);font-weight:900;line-height:.92;letter-spacing:-4px;color:var(--ink);margin-bottom:1.5rem}
+.hero-h1 .dim{color:#bbb}
+.hero-rule{height:4px;background:var(--ink);margin:1.5rem 0}
+.hero-desc{font-size:15px;color:var(--mid);line-height:1.7;max-width:500px;margin-bottom:2rem}
+.tui-launch-btn{background:var(--ink);color:var(--paper);border:none;padding:1rem 1.5rem;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform .1s, background .2s}
+.tui-launch-btn:hover{background:#333;transform:translate(4px,-4px);box-shadow:-4px 4px 0 var(--green)}
+.tui-launch-btn .btn-prompt{color:var(--green);animation:blink 1s step-end infinite}
+.hero-right{padding-top:3rem}
+.stat-stack{display:flex;flex-direction:column;gap:0}
+.stat-item{border-top:1px solid var(--ink);padding:.8rem 0;display:flex;justify-content:space-between;align-items:baseline}
+.stat-item:last-child{border-bottom:1px solid var(--ink)}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:900;color:var(--ink)}
+.stat-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--mid);letter-spacing:1px;text-transform:uppercase}
+
+/* SECTION HEADERS */
+.sec{padding:3rem 0;border-top:3px solid var(--ink);margin-top:3rem}
+.sec-header{display:flex;align-items:baseline;gap:1.5rem;margin-bottom:2rem}
+.sec-num{font-family:'Space Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:3px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:900;letter-spacing:-1px}
+
+/* PROJECTS GRID */
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--ink)}
+.proj{padding:1.5rem;border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);position:relative}
+.proj:nth-child(2n){border-right:none}
+.proj:nth-child(3),.proj:nth-child(4){border-bottom:none}
+.proj-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.proj-cat{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mid)}
+.proj-badge{font-family:'Space Mono',monospace;font-size:9px;padding:2px 6px;background:var(--ink);color:var(--paper)}
+.proj-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-bottom:.4rem;letter-spacing:-.5px}
+.proj-desc{font-size:12px;color:var(--mid);line-height:1.65;margin-bottom:.8rem}
+.proj-stack{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font-family:'Space Mono',monospace;font-size:9px;color:var(--mid);border:1px solid #ccc;padding:2px 6px}
+
+/* LIVE PROJECTS */
+.live-grid{display:flex;flex-direction:column;gap:0;border:2px solid var(--ink);margin-top:1.5rem}
+.live-card{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;text-decoration:none;color:inherit;border-bottom:1px solid var(--ink);transition:background .15s}
+.live-card:last-child{border-bottom:none}
+.live-card:hover{background:var(--ink);color:var(--paper)}
+.live-card:hover .live-url,.live-card:hover .live-desc,.live-card:hover .live-dot{filter:invert(1)}
+.live-left{display:flex;align-items:center;gap:1.5rem}
+.live-url{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--mid)}
+.live-name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
+.live-desc{font-size:12px;color:var(--mid)}
+.live-right{display:flex;align-items:center;gap:.5rem}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#2a2;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.live-arrow{font-size:16px;font-weight:700}
+
+/* EXPERIENCE */
+.exp-item{border:2px solid var(--ink);padding:1.5rem;margin-bottom:-2px}
+.exp-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.25rem}
+.exp-role{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.3px}
+.exp-date{font-family:'Space Mono',monospace;font-size:10px;color:var(--mid);letter-spacing:1px}
+.exp-co{font-family:'Space Mono',monospace;font-size:10px;color:var(--mid);margin-bottom:.7rem;text-transform:uppercase;letter-spacing:1px}
+.exp-pts{list-style:none}
+.exp-pts li{font-size:13px;color:var(--mid);line-height:1.7;padding-left:1.2rem;position:relative}
+.exp-pts li::before{content:"—";position:absolute;left:0;color:#999}
+
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--ink)}
+.ach{padding:1rem 1.25rem;border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);position:relative}
+.ach:nth-child(3n){border-right:none}
+.ach:nth-child(4),.ach:nth-child(5),.ach:nth-child(6){border-bottom:none}
+.ach-rank{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:.3rem}
+.ach-rank.gold{color:#8a6a00}
+.ach-rank.silver{color:var(--mid)}
+.ach-rank.blue{color:#1a4a8a}
+.ach-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:.2rem}
+.ach-org{font-family:'Space Mono',monospace;font-size:10px;color:var(--mid)}
+
+/* SKILLS */
+.skills-table{width:100%;border-collapse:collapse;border:2px solid var(--ink)}
+.skills-table td{padding:.7rem 1rem;border:1px solid var(--ink);font-size:13px;vertical-align:top}
+.skills-table td:first-child{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);width:130px;white-space:nowrap}
+.skill-hi{font-weight:700;color:var(--ink)}
+
+/* CONTACT */
+.contact-row{display:flex;gap:0;border:2px solid var(--ink);margin-top:1rem}
+.chip-link{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink);text-decoration:none;padding:.9rem 1.2rem;border-right:1px solid var(--ink);letter-spacing:.5px;transition:background .15s}
+.chip-link:last-child{border-right:none}
+.chip-link:hover{background:var(--ink);color:var(--paper)}
+
+/* FOOTER */
+footer{border-top:3px solid var(--ink);padding:1.5rem 0;display:flex;justify-content:space-between;align-items:center;margin-top:3rem}
+.footer-copy{font-family:'Space Mono',monospace;font-size:10px;color:var(--mid);letter-spacing:1px;text-transform:uppercase}
+
+/* ── TUI OVERLAY ── */
+#tui{display:none;position:fixed;inset:0;background:var(--crt);z-index:1000;font-family:'Space Mono',monospace;color:var(--green);font-size:13px;line-height:1.5;overflow:hidden}
+#tui.open{display:flex;flex-direction:column}
+
+/* scanline effect */
+#tui::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:10}
+
+.tui-titlebar{background:#0a1a06;border-bottom:1px solid var(--green-dim);padding:4px 12px;font-size:11px;letter-spacing:2px;color:var(--green-dim);flex-shrink:0;display:flex;justify-content:space-between}
+.tui-titlebar span{color:var(--green)}
+
+.tui-body{display:flex;flex:1;overflow:hidden;background:#050f03}
+
+/* MULTI-PANE LAYOUT */
+.tui-left-col{width:320px;display:flex;flex-direction:column;border-right:1px solid var(--green-dim);flex-shrink:0}
+.tui-pane-sm{flex:1;border-bottom:1px solid var(--green-dim);display:flex;flex-direction:column;overflow:hidden;position:relative;background:#050f03}
+.tui-pane-sm:last-child{border-bottom:none}
+.tui-pane-sm.focused{border:1px solid var(--green);z-index:10;margin:-1px}
+.tui-pane-sm.focused .tui-pane-title{background:var(--green-muted);color:var(--green)}
+
+.tui-pane-title{padding:4px 10px;background:#0a1a06;border-bottom:1px solid var(--green-dim);font-size:9px;letter-spacing:2px;color:var(--green-dim);flex-shrink:0;text-transform:uppercase;display:flex;justify-content:space-between}
+.tui-pane-title .pane-key{color:var(--green-muted);font-weight:400}
+
+.tui-pane-list{flex:1;overflow-y:auto;padding:4px 0}
+.tui-item{padding:4px 10px;font-size:11px;color:var(--green-dim);cursor:pointer;display:flex;justify-content:space-between;align-items:center;white-space:nowrap;overflow:hidden}
+.tui-item.selected{background:var(--green-muted);color:var(--green)}
+.tui-item.active-selection{background:rgba(57,255,20,0.15);color:var(--green)}
+.tui-item-idx{width:18px;opacity:0.5}
+
+.tui-main-view{flex:1;overflow-y:auto;padding:20px;background:#020702;position:relative}
+.tui-content-header{border-bottom:1px solid var(--green-dim);padding-bottom:15px;margin-bottom:20px}
+.tui-content-title{font-size:24px;font-weight:900;color:var(--green);margin-bottom:5px;letter-spacing:-1px}
+.tui-content-subtitle{font-size:11px;color:var(--green-dim);text-transform:uppercase;letter-spacing:2px}
+
+/* TUI CONTENT STYLES */
+.tui-detail-body{font-size:13px;color:var(--green-dim);line-height:1.7}
+.tui-detail-body ul{margin-top:10px;list-style:none}
+.tui-detail-body li{padding-left:1.5rem;position:relative;margin-bottom:8px}
+.tui-detail-body li::before{content:"[+]";position:absolute;left:0;color:var(--green);font-size:10px}
+.tui-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tui-tag{font-size:9px;border:1px solid var(--green-muted);padding:1px 5px;color:var(--green-muted)}
+.tui-section-label{font-size:9px;letter-spacing:3px;color:var(--green-muted);margin-bottom:8px;text-transform:uppercase}
+.tui-skill-row{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid var(--green-muted);padding:5px 0}
+.tui-skill-row:last-child{border-bottom:none}
+.tui-skill-key{width:110px;font-size:10px;color:var(--green-dim);letter-spacing:1px;flex-shrink:0}
+.tui-skill-val{font-size:11px;color:var(--green)}
+.tui-ach-row{border-bottom:1px solid var(--green-muted);padding:7px 0;display:flex;gap:12px;align-items:baseline}
+.tui-ach-row:last-child{border-bottom:none}
+.tui-ach-rank{font-size:9px;letter-spacing:2px;width:90px;flex-shrink:0}
+.tui-ach-rank.gold{color:#c49a3c}
+.tui-ach-rank.silver{color:var(--green-dim)}
+.tui-ach-title{font-size:12px;color:var(--green);flex:1}
+.tui-ach-year{font-size:10px;color:var(--green-muted)}
+
+/* HIDDEN / ABOUT SECTION */
+.tui-hidden-header{text-align:center;padding:1rem 0 .5rem;border-bottom:1px solid var(--green-muted);margin-bottom:1rem}
+.tui-hidden-header .access-label{font-size:9px;letter-spacing:4px;color:var(--green-dim)}
+.tui-hidden-header .access-title{font-size:18px;font-weight:700;color:var(--green);margin-top:4px}
+.tui-entry{margin-bottom:1.2rem;border-left:2px solid var(--green-muted);padding-left:12px}
+.tui-entry-key{font-size:9px;letter-spacing:3px;color:var(--green-muted);margin-bottom:4px;text-transform:uppercase}
+.tui-entry-val{font-size:12px;color:var(--green-dim);line-height:1.8}
+.tui-entry-val em{color:var(--green);font-style:italic}
+.tui-entry-val strong{color:var(--green);font-style:normal}
+
+/* STATUS BAR */
+.tui-statusbar{background:#0a1a06;border-top:1px solid var(--green-dim);padding:4px 12px;display:flex;gap:16px;align-items:center;flex-shrink:0}
+.tui-key{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--green-dim)}
+.tui-key kbd{background:#0d2a08;border:1px solid var(--green-muted);padding:1px 5px;border-radius:2px;font-size:9px;color:var(--green);font-family:'Space Mono',monospace}
+.tui-spacer{flex:1}
+.tui-status-right{font-size:10px;color:var(--green-muted);letter-spacing:1px}
+
+/* scrollbar inside TUI */
+#tui ::-webkit-scrollbar{width:4px}
+#tui ::-webkit-scrollbar-track{background:var(--crt)}
+#tui ::-webkit-scrollbar-thumb{background:var(--green-muted)}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .hero{grid-template-columns:1fr}
+  .hero-right{padding-top:0}
+  .proj-grid{grid-template-columns:1fr}
+  .proj{border-right:none!important}
+  .ach-grid{grid-template-columns:1fr 1fr}
+  .contact-row{flex-direction:column}
+  .chip-link{border-right:none;border-bottom:1px solid var(--ink)}
+  .tui-sidebar{width:160px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ BRUTALIST SURFACE ═══════════════ -->
+<div class="site">
+
+<nav>
+  <div class="nav-name">Prasad C. Desale</div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#exp">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="tui-trigger" id="tuiBtn" title="Open terminal interface">
+      <span class="prompt-sign">$</span>
+      <span class="prompt-text">tui</span>
+      <span class="prompt-cursor"></span>
+    </button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-index">AI · SYSTEMS · BACKEND · 20.01°N 73.79°E</div>
+    <h1 class="hero-h1">PRASAD<br>C.<br><span class="dim">DESALE</span></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-desc">B.Tech AI & Data Science. 2+ years building backend systems, ML pipelines, and industrial IoT in production. National competition winner. Open-source contributor.</p>
+    <button class="tui-launch-btn" onclick="openTUI()">
+      <span class="btn-prompt">></span> Launch System Terminal (TUI)
+    </button>
+  </div>
+  <div class="hero-right">
+    <div class="stat-stack">
+      <div class="stat-item"><span class="stat-val">4×</span><span class="stat-label">Competition prizes</span></div>
+      <div class="stat-item"><span class="stat-val">2+</span><span class="stat-label">Years freelance</span></div>
+      <div class="stat-item"><span class="stat-val">99%</span><span class="stat-label">Prod uptime</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="work">
+  <div class="sec-header">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">Selected Work</h2>
+  </div>
+  <div class="proj-grid">
+    <div class="proj">
+      <div class="proj-top"><span class="proj-cat">Astro · ML</span><span class="proj-badge">1st · AICTE 2025</span></div>
+      <div class="proj-name">Hyperspectral Lunar Mapping</div>
+      <p class="proj-desc">Mapped lunar terrain and mineral signatures from Chandrayaan-2 satellite data. Selected for FOSS4G International 2026.</p>
+      <div class="proj-stack"><span class="tag">Python</span><span class="tag">NumPy</span><span class="tag">Spectral</span></div>
+    </div>
+    <div class="proj">
+      <div class="proj-top"><span class="proj-cat">NLP · Agents</span><span class="proj-badge">Runner-up · DBMS</span></div>
+      <div class="proj-name">SpeakQL</div>
+      <p class="proj-desc">ReAct-style NL-to-SQL agent with custom tool-calling, SQL safety layer, and dynamic schema exploration.</p>
+      <div class="proj-stack"><span class="tag">Python</span><span class="tag">LLM APIs</span><span class="tag">PostgreSQL</span></div>
+    </div>
+    <div class="proj">
+      <div class="proj-top"><span class="proj-cat">Industrial · LiDAR</span><span class="proj-badge">Live · Production</span></div>
+      <div class="proj-name">LVM System — BKT Tyres</div>
+      <p class="proj-desc">Load volume measurement system for Balkrishna Industries integrating SICK 2D LiDAR with Python backend.</p>
+      <div class="proj-stack"><span class="tag">LiDAR</span><span class="tag">Python</span><span class="tag">Systemd</span></div>
+    </div>
+    <div class="proj">
+      <div class="proj-top"><span class="proj-cat">IoT · ML</span><span class="proj-badge">1st · KBT Expo 2024</span></div>
+      <div class="proj-name">Krishi — IoT Farm Monitor</div>
+      <p class="proj-desc">Real-time crop yield prediction via ESP32 sensors and Random Forest. 85% accuracy, deployed and demonstrated live.</p>
+      <div class="proj-stack"><span class="tag">ESP32</span><span class="tag">Python</span><span class="tag">Random Forest</span></div>
+    </div>
+  </div>
+  <div class="live-grid">
+    <a href="https://writeapp.in/" target="_blank" rel="noopener" class="live-card">
+      <div class="live-left">
+        <div class="live-url">writeapp.in</div>
+        <div><div class="live-name">WriteApp</div><div class="live-desc">Writing application — deployed and live in production</div></div>
+      </div>
+      <div class="live-right"><div class="live-dot"></div><span class="live-arrow">↗</span></div>
+    </a>
+    <a href="https://www.cpag.in/" target="_blank" rel="noopener" class="live-card">
+      <div class="live-left">
+        <div class="live-url">cpag.in</div>
+        <div><div class="live-name">CPAG</div><div class="live-desc">Full-stack client project — GCP/DigitalOcean infrastructure</div></div>
+      </div>
+      <div class="live-right"><div class="live-dot"></div><span class="live-arrow">↗</span></div>
+    </a>
+  </div>
+</section>
+
+<section class="sec" id="exp">
+  <div class="sec-header"><span class="sec-num">02</span><h2 class="sec-title">Experience</h2></div>
+  <div class="exp-item">
+    <div class="exp-head">
+      <div class="exp-role">Freelance Developer & Systems Engineer</div>
+      <div class="exp-date">Jul 2025 → Present</div>
+    </div>
+    <div class="exp-co">Self-employed · Nashik, India</div>
+    <ul class="exp-pts">
+      <li>Designed and deployed LiDAR-based volumetric measurement for BKT Tyres integrating SICK 2D sensors with Python backend</li>
+      <li>Built full-stack Django / FastAPI applications for manufacturing clients, 99%+ uptime via Systemd on Linux servers</li>
+      <li>Managed complete project lifecycle — budgets, timelines, client communications, server provisioning on GCP and DigitalOcean</li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-header"><span class="sec-num">03</span><h2 class="sec-title">Achievements</h2></div>
+  <div class="ach-grid">
+    <div class="ach"><div class="ach-rank gold">1st Prize</div><div class="ach-title">AICTE Innovation Cell</div><div class="ach-org">Lunar mapping · 2025</div></div>
+    <div class="ach"><div class="ach-rank silver">Runner-up</div><div class="ach-title">Smart India Hackathon</div><div class="ach-org">Blockchain escrow · 2025</div></div>
+    <div class="ach"><div class="ach-rank gold">1st Prize</div><div class="ach-title">KBT Expo Nashik</div><div class="ach-org">Krishi IoT · 2024</div></div>
+    <div class="ach"><div class="ach-rank silver">Runner-up</div><div class="ach-title">SKTIM National Hackathon</div><div class="ach-org">Top 2 of 100+ · 2024</div></div>
+    <div class="ach"><div class="ach-rank blue">Selected</div><div class="ach-title">FOSS4G International</div><div class="ach-org">Research · 2026</div></div>
+    <div class="ach"><div class="ach-rank gold">Best Delegate</div><div class="ach-title">Fravashi MUN</div><div class="ach-org">UNSC · 2024</div></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-header"><span class="sec-num">04</span><h2 class="sec-title">Skills</h2></div>
+  <table class="skills-table">
+    <tr><td>Languages</td><td><span class="skill-hi">Python</span>, Go, C++, C, SQL</td></tr>
+    <tr><td>AI / ML</td><td><span class="skill-hi">TensorFlow</span>, <span class="skill-hi">PyTorch</span>, Scikit-learn, NumPy, Spectral Analysis</td></tr>
+    <tr><td>Backend</td><td>Django, FastAPI, Gin (Go), REST APIs, ReAct Agent Architecture</td></tr>
+    <tr><td>Cloud / DevOps</td><td>Docker, GCP, DigitalOcean, Linux (Fedora/Debian), Git</td></tr>
+    <tr><td>Databases</td><td>PostgreSQL, MongoDB, Redis</td></tr>
+  </table>
+</section>
+
+<section class="sec" id="contact">
+  <div class="sec-header"><span class="sec-num">05</span><h2 class="sec-title">Contact</h2></div>
+  <p style="color:var(--mid);font-size:15px;margin-bottom:1rem">Open to internships, freelance work, and research collaborations.</p>
+  <div class="contact-row">
+    <a href="mailto:prasaddesale05@gmail.com" class="chip-link">prasaddesale05@gmail.com</a>
+    <a href="https://www.linkedin.com/in/Prasad.C.Desale" target="_blank" rel="noopener" class="chip-link">LinkedIn ↗</a>
+    <a href="tel:+919561393246" class="chip-link">+91 95613 93246</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">Prasad C. Desale · 2025 · AI & Data Science</div>
+  <div class="footer-copy">Nashik, Maharashtra, India</div>
+</footer>
+
+</div><!-- /site -->
+
+
+<!-- ═══════════════ TUI OVERLAY ═══════════════ -->
+<div id="tui" role="dialog" aria-label="Terminal interface">
+
+  <div class="tui-titlebar">
+    <span>prasad.desale — portfolio.tui v1.0.0</span>
+    <span>[ press <kbd style="font-family:monospace;font-size:10px">q</kbd> or <kbd style="font-family:monospace;font-size:10px">ESC</kbd> to exit ]</span>
+  </div>
+
+  <div class="tui-body">
+
+    <!-- LEFT COLUMN: MULTI-PANE NAVIGATION -->
+    <div class="tui-left-col">
+      <!-- Status Pane -->
+      <div class="tui-pane-sm focused" id="pane-0" data-type="status">
+        <div class="tui-pane-title"><span>Status</span><span class="pane-key">1</span></div>
+        <div class="tui-pane-list">
+          <div class="tui-item selected" data-id="overview"><span class="tui-item-idx">st</span> Overview</div>
+          <div class="tui-item" data-id="about"><span class="tui-item-idx">ab</span> About Me</div>
+        </div>
+      </div>
+
+      <!-- Projects Pane -->
+      <div class="tui-pane-sm" id="pane-1" data-type="projects">
+        <div class="tui-pane-title"><span>Projects</span><span class="pane-key">2</span></div>
+        <div class="tui-pane-list">
+          <div class="tui-item" data-id="lunar"><span class="tui-item-idx">01</span> Lunar Mapping</div>
+          <div class="tui-item" data-id="speakql"><span class="tui-item-idx">02</span> SpeakQL</div>
+          <div class="tui-item" data-id="lvm"><span class="tui-item-idx">03</span> LVM System</div>
+          <div class="tui-item" data-id="krishi"><span class="tui-item-idx">04</span> Krishi IoT</div>
+        </div>
+      </div>
+
+      <!-- Experience Pane -->
+      <div class="tui-pane-sm" id="pane-2" data-type="experience">
+        <div class="tui-pane-title"><span>Experience</span><span class="pane-key">3</span></div>
+        <div class="tui-pane-list">
+          <div class="tui-item" data-id="freelance"><span class="tui-item-idx">fr</span> Freelance Engineer</div>
+        </div>
+      </div>
+
+      <!-- Skills Pane -->
+      <div class="tui-pane-sm" id="pane-3" data-type="skills">
+        <div class="tui-pane-title"><span>Skills & Achievements</span><span class="pane-key">4</span></div>
+        <div class="tui-pane-list">
+          <div class="tui-item" data-id="languages"><span class="tui-item-idx">ln</span> Languages</div>
+          <div class="tui-item" data-id="aiml"><span class="tui-item-idx">ai</span> AI / ML</div>
+          <div class="tui-item" data-id="awards"><span class="tui-item-idx">aw</span> Awards</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN VIEW: DETAILED CONTENT -->
+    <div class="tui-main-view" id="tui-main-content">
+      <!-- Dynamic content injected here -->
+      <div class="tui-content-header">
+        <div class="tui-content-title">PRASAD C. DESALE</div>
+        <div class="tui-content-subtitle">SYSTEM INITIALIZED · VERSION 1.0.0</div>
+      </div>
+      <div class="tui-detail-body">
+        Select a component on the left to view technical specifications.
+        Use <kbd>TAB</kbd> to switch panes, <kbd>J</kbd>/<kbd>K</kbd> to navigate items.
+      </div>
+    </div>
+
+  </div><!-- /tui-body -->
+
+  <div class="tui-statusbar">
+    <span class="tui-key"><kbd>Tab</kbd> switch pane</span>
+    <span class="tui-key"><kbd>j</kbd>/<kbd>k</kbd> navigate</span>
+    <span class="tui-key"><kbd>Enter</kbd> action</span>
+    <span class="tui-key"><kbd>q</kbd> exit</span>
+    <span class="tui-spacer"></span>
+    <span class="tui-status-right" id="tuiStatus">READY</span>
+  </div>
+
+</div><!-- /tui -->
+
+
+<script>
+// ── DATA ──
+const TUI_DATA = {
+  overview: { title: 'PRASAD C. DESALE', subtitle: 'SYSTEM INITIALIZED · VERSION 1.0.0', body: 'B.Tech AI & Data Science. Specialized in building high-performance backend systems and ML pipelines. Focus on precision, reliability, and architectural integrity.' },
+  about: { title: 'THE HUMAN THREAD', subtitle: 'PERSONAL LOG · DECRYPTED', body: 'Philosophy: Nietzsche & Kant. Music: Shostakovich & Bach. Interest: Naval warfare history. Precision under pressure is the only thing that holds.' },
+  lunar: { title: 'HYPERSPECTRAL LUNAR MAPPING', subtitle: 'PYTHON · ML · AICTE 1ST PRIZE', body: '<ul><li>Mapped lunar mineral signatures from Chandrayaan-2 satellite data</li><li>Applied spectral unmixing for surface composition analysis</li><li>Selected for FOSS4G International 2026</li></ul>' },
+  speakql: { title: 'SPEAKQL AGENT', subtitle: 'NLP · LLM · AGENTS', body: '<ul><li>ReAct-style NL-to-SQL agent with custom tool-calling</li><li>SQL safety layer for production environments</li><li>Dynamic schema exploration and validation</li></ul>' },
+  lvm: { title: 'LVM SYSTEM — BKT TYRES', subtitle: 'INDUSTRIAL · LIDAR · SYSTEMD', body: '<ul><li>LiDAR-based material tracking for heavy industry</li><li>99%+ uptime production environment on Linux</li><li>Integration with SICK 2D sensors</li></ul>' },
+  krishi: { title: 'KRISHI IOT', subtitle: 'IOT · ML · KBT 1ST PRIZE', body: '<ul><li>Real-time crop yield prediction via ESP32 network</li><li>Random Forest classifier with 85% accuracy</li><li>Demonstrated live in agricultural settings</li></ul>' },
+  freelance: { title: 'FREELANCE SYSTEMS ENGINEER', subtitle: 'JUL 2025 — PRESENT', body: '<ul><li>Full-stack systems for manufacturing clients</li><li>Linux server provisioning (GCP/DigitalOcean)</li><li>High-reliability industrial automation backends</li></ul>' },
+  languages: { title: 'TECHNICAL LANGUAGES', subtitle: 'CORE STACK', body: '<ul><li>Python (Advanced System Architecture)</li><li>Go (Concurrent Microservices)</li><li>SQL (Optimized Relational Design)</li><li>C / C++ (Embedded & Systems)</li></ul>' },
+  aiml: { title: 'AI / ML CAPABILITIES', subtitle: 'CORE DOMAINS', body: '<ul><li>TensorFlow / PyTorch / Scikit-learn</li><li>Spectral Analysis & Signal Processing</li><li>LLM Agentic Architectures (ReAct)</li></ul>' },
+  awards: { title: 'RECOGNITIONS', subtitle: 'NATIONAL & INTERNATIONAL', body: '<ul><li>1st Prize — AICTE Innovation 2025</li><li>Runner-up — SIH 2025</li><li>1st Prize — KBT Expo 2024</li><li>FOSS4G International Speaker 2026</li></ul>' }
+};
+
+// ── STATE ──
+let tuiOpen = false;
+let activePaneIdx = 0;
+const paneCount = 4;
+
+// ── TUI CORE ──
+const tuiOverlay = document.getElementById('tui');
+const mainContent = document.getElementById('tui-main-content');
+const statusText = document.getElementById('tuiStatus');
+
+function openTUI() {
+  tuiOpen = true;
+  tuiOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updatePaneUI();
+  renderContent();
+}
+
+function closeTUI() {
+  tuiOpen = false;
+  tuiOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('tuiBtn').addEventListener('click', openTUI);
+
+function updatePaneUI() {
+  document.querySelectorAll('.tui-pane-sm').forEach((p, i) => {
+    p.classList.toggle('focused', i === activePaneIdx);
+  });
+  updateStatus();
+}
+
+function updateStatus() {
+  const activePane = document.getElementById(`pane-${activePaneIdx}`);
+  const title = activePane.querySelector('.tui-pane-title span').textContent;
+  const selectedItem = activePane.querySelector('.tui-item.selected');
+  const itemName = selectedItem ? selectedItem.textContent.trim().split(' ').slice(1).join(' ') : '---';
+  statusText.textContent = `${title.toUpperCase()} · ${itemName.toUpperCase()}`;
+}
+
+function renderContent() {
+  const activePane = document.getElementById(`pane-${activePaneIdx}`);
+  const selectedItem = activePane.querySelector('.tui-item.selected');
+  if (!selectedItem) return;
+
+  const id = selectedItem.dataset.id;
+  const data = TUI_DATA[id];
+  if (!data) return;
+
+  mainContent.innerHTML = `
+    <div class="tui-content-header">
+      <div class="tui-content-title">${data.title}</div>
+      <div class="tui-content-subtitle">${data.subtitle}</div>
+    </div>
+    <div class="tui-detail-body">${data.body}</div>
+  `;
+}
+
+// ── NAVIGATION ──
+function moveSelection(dir) {
+  const activePane = document.getElementById(`pane-${activePaneIdx}`);
+  const items = Array.from(activePane.querySelectorAll('.tui-item'));
+  const currentIdx = items.findIndex(item => item.classList.contains('selected'));
+  
+  let newIdx = currentIdx + dir;
+  if (newIdx < 0) newIdx = 0;
+  if (newIdx >= items.length) newIdx = items.length - 1;
+
+  items[currentIdx].classList.remove('selected');
+  items[newIdx].classList.add('selected');
+  
+  renderContent();
+  updateStatus();
+}
+
+document.addEventListener('keydown', e => {
+  if (!tuiOpen) return;
+
+  if (e.key === 'q' || e.key === 'Escape') {
+    closeTUI();
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    activePaneIdx = (activePaneIdx + 1) % paneCount;
+    updatePaneUI();
+    renderContent();
+    return;
+  }
+
+  if (e.key === 'j' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    moveSelection(1);
+  }
+  if (e.key === 'k' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    moveSelection(-1);
+  }
+  
+  if (e.key >= '1' && e.key <= '4') {
+    activePaneIdx = parseInt(e.key) - 1;
+    updatePaneUI();
+    renderContent();
+  }
+});
+
+// Click support
+document.querySelectorAll('.tui-item').forEach(item => {
+  item.addEventListener('click', function() {
+    const pane = this.closest('.tui-pane-sm');
+    activePaneIdx = parseInt(pane.id.split('-')[1]);
+    
+    pane.querySelectorAll('.tui-item').forEach(i => i.classList.remove('selected'));
+    this.classList.add('selected');
+    
+    updatePaneUI();
+    renderContent();
+  });
+});
+</script>
+</body>
+</html>
