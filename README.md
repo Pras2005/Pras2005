@@ -1,51 +1,44 @@
-# Pras2005
+# Pras2005 - Personal Portfolio
 
-## Table of Contents
+A sleek, interactive personal portfolio website showcasing projects, skills, and experience through a unique Terminal User Interface (TUI) implemented entirely in frontend web technologies.
 
-- [Deep Dive Description](#deep-dive-description)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation & Setup](#installation--setup)
-- [Usage / Running Locally](#usage--running-locally)
+## Overview
+This repository contains a single-page portfolio (`index.html`) for GitHub user `Pras2005`. It leverages vanilla HTML, CSS, and JavaScript to create a retro, keyboard-navigable terminal aesthetic over a modern web page. 
 
 ## Deep Dive Description
-
-Pras2005 is a robust software engineering project carefully architected to provide scalable and efficient functionality. This repository implements a collection of code structures and algorithms designed to solve specific domain problems effectively. The architecture emphasizes modularity and maintainability. 
-
-The core functionality involves processing inputs, managing state or data persistence, and delivering outputs or serving API endpoints as dictated by the specific modular implementations found within the file tree. By breaking down the logic into distinct modules, the system ensures that each component handles a single responsibility, paving the way for easier testing and future feature expansions.
-
-## Project Structure
-
-```text
-Pras2005/
-├── .codex
-├── README.md
-└── index.html
-
-```
+The core logic resides within the embedded `<script>` tag in `index.html`. 
+- **Data Model**: Information about projects, experience, and skills is stored in a structured JavaScript dictionary named `TUI_DATA`. Keys correspond to data IDs (e.g., `speakql`, `lvm`, `krishi`) and contain `title`, `subtitle`, and `body` fields (rendered as HTML).
+- **TUI State Management**: 
+  - `tuiOpen`: Tracks if the overlay is active.
+  - `activePaneIdx`: Tracks which of the 4 panes is currently focused.
+- **Keyboard Navigation Engine**: Event listeners capture standard terminal/Vim keybindings (e.g., `j`/`ArrowDown`, `k`/`ArrowUp`, `q`, `Tab`, `1-4`) to traverse panes, select items, and dynamically render content into the `#tui-main-content` DOM element.
 
 ## Prerequisites
-
-Before you begin, ensure you have met the following requirements:
-- Appropriate language runtime and build tools for the source files.
-- Git
+- Any modern web browser (Chrome, Firefox, Safari, Edge)
 
 ## Installation & Setup
+No complex build steps or dependencies are required as this is a static vanilla web project.
 
-Follow these step-by-step instructions to get a development environment running:
-
-1. **Clone the repository:**
+1. **Clone the repository**:
    ```bash
    git clone git@github.com:Pras2005/Pras2005.git
    cd Pras2005
    ```
 
-4. **Environment Variables:**
-   If there is a `.env.example` file, copy it to `.env` and configure the necessary keys:
-   ```bash
-   cp .env.example .env
-   ```
-
 ## Usage / Running Locally
+Simply open the `index.html` file in your preferred web browser:
+```bash
+# On macOS
+open index.html
 
-Execute the main application binary or index file according to the framework used.
+# On Linux
+xdg-open index.html
+```
+Once opened, click the "TUI" button or use the mapped keys to interact with the terminal overlay.
+
+## Project Structure
+```text
+Pras2005
+├── index.html        # The entire application (HTML layout, CSS styling, JS logic)
+└── README.md         # Documentation
+```
